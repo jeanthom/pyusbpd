@@ -228,11 +228,11 @@ class VDMHeader:
 
     @property
     def command_type(self):
-        raise NotImplementedError
+        return VDMCommandType(self.raw[0] & 0xC0 >> 5)
 
     @property
     def command(self):
-        raise NotImplementedError
+        return VDMCommand(self.raw[0] & 0x1F)
 
     def __repr__(self):
         if self.vdm_type: # Structured VDM
