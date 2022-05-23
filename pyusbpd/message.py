@@ -4,7 +4,7 @@ class MessageHeader:
     """USB Power Delivery Message Header (6.2.1.1)"""
 
     def __init__(self, raw=bytes(2)):
-        assert isinstance(raw, bytes)
+        assert isinstance(raw, (bytearray, bytes))
         assert len(raw) == 2
         self.raw = raw
 
@@ -70,7 +70,7 @@ class ExtendedMessageHeader:
     """USB Power Delivery Extended Message Header (6.2.1.2)"""
 
     def __init__(self, raw=bytes(2)):
-        assert isinstance(raw, bytes)
+        assert isinstance(raw, (bytes, bytearray))
         assert len(raw) == 2
         self.raw = raw
 
