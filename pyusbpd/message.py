@@ -1,4 +1,4 @@
-from pyusbpd.enum import SpecificationRevision
+from pyusbpd.enum import *
 
 class MessageHeader:
     """USB Power Delivery Message Header (6.2.1.1)"""
