@@ -215,7 +215,8 @@ class VDMHeader:
 
     @property
     def structured_vdm_version(self):
-        raise NotImplementedError
+        print(self.raw[1])
+        return StructuredVDMVersion((self.raw[1] & 0x60) >> 5)
 
     @property
     def vendor_use(self):
