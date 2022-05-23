@@ -25,3 +25,29 @@ class SOP(enum.Enum):
     SOP_DOUBLEPRIME = "SOP''"
     SOP_PRIME_DEBUG = "SOP'_Debug"
     SOP_DOUBLEPRIME_DEBUG = "SOP''_Debug"
+
+class StructuredVDMVersion(enum.Enum):
+    REV10 = 0b00
+    REV20 = 0b01
+
+    def __str__(self):
+        if self.value == 0b00:
+            return "Version 1.0"
+        if self.value == 0b01:
+            return "Version 2.0"
+
+class VDMCommandType(enum.Enum):
+    """Enum of all structured VDM Header Command Types (Table 6-29)"""
+    REQ = 0b00
+    ACK = 0b01
+    NAK = 0b10
+    BUSY = 0b11
+
+class VDMCommand(enum.Enum):
+    """Enum of all available VDM Header Commands (Table 6-29)"""
+    DISCOVER_IDENTITY = 1
+    DISCOVER_SVID = 2
+    DISCOVER_MODES = 3
+    ENTER_MODE = 4
+    EXIT_MODE = 5
+    ATTENTION = 6
