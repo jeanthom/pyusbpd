@@ -28,6 +28,14 @@ pyusbpd is mostly in a PoC state, but feel free to send pull requests ;-)
 
 ## Install
 
+Using `pip`:
+
+```bash
+pip install pyusbpd
+```
+
+Or using `git`:
+
 ```bash
 git clone https://github.com/jeanthom/pyusbpd
 cd pyusbpd
