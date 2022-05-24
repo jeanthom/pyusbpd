@@ -1,4 +1,5 @@
 from pyusbpd.enum import *
+from pyusbpd.helpers import get_bit_from_array
 
 class MessageHeader:
     """USB Power Delivery Message Header (6.2.1.1)"""
@@ -156,6 +157,8 @@ class DataMessage(Message):
     def decode(self):
         if self.message_header.message_type == Vendor_DefinedMessage.MESSAGE_TYPE:
             return Vendor_DefinedMessage(self.sop, self.raw)
+        elif self.message_header.message_type == Source_CapabilitiesMessage.MESSAGE_TYPE:
+            return Source_CapabilitiesMessage(self.sop, self.raw)
         else:
             return self
 
@@ -206,8 +209,13 @@ class VDMHeader:
         self.raw = raw
 
     @property
-    def vendor_id(self):
+    def vendor_id(self) -> int:
         return self.raw[3] << 8 | self.raw[2]
+
+    @vendor_id.setter
+    def vendor_id(self, value: int):
+        self.raw[3] = (value >> 8) & 0xFF
+        self.raw[2] = value & 0xFF
 
     @property
     def vdm_type(self):
@@ -223,8 +231,8 @@ class VDMHeader:
         return (self.raw[1] & 0x7F) << 8 | self.raw[0]
 
     @property
-    def object_position(self):
-        raise NotImplementedError
+    def object_position(self) -> int:
+        return self.raw[1] & 0x07
 
     @property
     def command_type(self):
@@ -264,3 +272,80 @@ class Vendor_DefinedMessage(DataMessage):
 
     def decode(self):
         return self
+
+class PowerData:
+    def __init__(self, raw):
+        assert isinstance(raw, (bytes, bytearray))
+        assert len(raw) == 4
+        self.raw = raw
+
+    @property
+    def type(self):
+        return PDOType((self.raw[3] & 0xC0) >> 6)
+
+    def __repr__(self):
+        return f"""Power data object
+---
+Type: {self.type}"""
+
+class FixedSupplyPowerData(PowerData):
+    def __init__(self, raw):
+        super().__init__(raw)
+
+    @property
+    def usb_suspend_supported(self) -> bool:
+        return get_bit_from_array(self.raw, 28)
+
+    @property
+    def unconstrained_power(self) -> bool:
+        return get_bit_from_array(self.raw, 27)
+
+    @property
+    def usb_communications_capable(self) -> bool:
+        return get_bit_from_array(self.raw, 26)
+
+    @property
+    def dualrole_data(self) -> bool:
+        return get_bit_from_array(self.raw, 25)
+
+    @property
+    def unchunked_extended_messages_supported(self) -> bool:
+        return get_bit_from_array(self.raw, 24)
+
+    @property
+    def epr_mode_capable(self) -> bool:
+        return get_bit_from_array(self.raw, 23)
+
+    @property
+    def voltage(self) -> int:
+        return (self.raw[1] >> 2) | ((self.raw[2] & 0xF) << 6)
+
+    @property
+    def maximum_current(self) -> int:
+        """Maximum current expressed in 10 mA units (Table 6-9)"""
+        return self.raw[0] | (self.raw[1] & 0x3) << 8
+
+    def __repr__(self):
+        return super().__repr__() + "\n" + f"""Fixed supply power data object
+---
+USB suspend supported: {self.usb_suspend_supported}
+Unconstrained power: {self.unconstrained_power}
+USB communications capable: {self.usb_communications_capable}
+Dual-role data: {self.dualrole_data}
+Unchunked Extended Messages Supported: {self.unchunked_extended_messages_supported}
+EPR Mode Capable: {self.epr_mode_capable}
+Voltage: {self.voltage*50/1000} V
+Maximum current: {self.maximum_current*10} mA"""
+
+class Source_CapabilitiesMessage(DataMessage):
+    MESSAGE_TYPE = 0b00001
+
+    def __init__(self, sop, raw):
+        super().__init__(sop, raw)
+        assert self.message_header.message_type == Source_CapabilitiesMessage.MESSAGE_TYPE
+
+    def decode(self):
+        return self
+
+    def __repr__(self):
+        return str(FixedSupplyPowerData(self.data_objects[0]))
