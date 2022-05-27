@@ -51,3 +51,10 @@ class VDMCommand(enum.Enum):
     ENTER_MODE = 4
     EXIT_MODE = 5
     ATTENTION = 6
+
+class PDOType(enum.Enum):
+    """Power Data Object type (Table 6-7)"""
+    FIXED_SUPPLY = 0b00
+    BATTERY = 0b01
+    VARIABLE_SUPPLY = 0b10
+    AUGMENTED_POWER_DATA_OBJECT = 0b11
