@@ -19,11 +19,11 @@ class SpecificationRevision(enum.IntEnum):
     RESERVED = 0b11
 
     def __str__(self):
-        if self.value == 0b00:
+        if self.value == SpecificationRevision.REV10:
             return "Revision 1.0"
-        if self.value == 0b01:
+        if self.value == SpecificationRevision.REV20:
             return "Revision 2.0"
-        if self.value == 0b10:
+        if self.value == SpecificationRevision.REV30:
             return "Revision 3.0"
         return "Reserved, Shall Not be used"
 
@@ -37,6 +37,7 @@ class SOP(enum.Enum):
     SOP_DOUBLEPRIME_DEBUG = "SOP''_Debug"
 
 class StructuredVDMVersion(enum.IntEnum):
+    """Enum of all Structured VDM Version (Table 6-29)"""
     REV10 = 0b00
     REV20 = 0b01
 
