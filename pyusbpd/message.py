@@ -158,15 +158,15 @@ class PingMessage(ControlMessage):
         super().__init__()
         self.header.message_type = PingMessage.MESSAGE_TYPE
 
+@dataclass
 class VDMHeader:
-    def __init__(self):
-        self.vendor_id = 0
-        self.vdm_type = False
-        self.structured_vdm_version = StructuredVDMVersion.REV10
-        self.vendor_use = 0
-        self.object_position = 0
-        self.command_type = VDMCommandType.REQ
-        self.command = VDMCommand.DISCOVER_IDENTITY
+    vendor_id: int = 0
+    vdm_type: bool = False
+    structured_vdm_version: StructuredVDMVersion = StructuredVDMVersion.REV10
+    vendor_use: int = 0
+    object_position: int = 0
+    command_type: VDMCommandType = VDMCommandType.REQ
+    command: VDMCommand = VDMCommand.DISCOVER_IDENTITY
 
     def parse(self, raw: bytes):
         assert len(raw) == 4
