@@ -84,7 +84,7 @@ class Message:
 
     @abc.abstractmethod
     def parse(self, raw: bytes):
-        return
+        self.header.parse(raw[0:2])
 
     @abc.abstractmethod
     def encode(self) -> bytes:
@@ -92,7 +92,7 @@ class Message:
 
 class ControlMessage(Message):
     def parse(self, raw: bytes):
-        self.header.parse(raw[0:2])
+        super().parse(raw)
 
     def encode(self) -> bytes:
         return self.header.encode()
@@ -103,7 +103,7 @@ class DataMessage(Message):
         self.data_objects = []
 
     def parse(self, raw: bytes):
-        self.header.parse(raw[0:2])
+        super().parse(raw)
         self._parse_data_objects(raw[2:])
 
     def _parse_data_objects(self, raw):
@@ -120,7 +120,7 @@ class ExtendedMessage(Message):
         self.extended_header = ExtendedMessageHeader()
 
     def parse(self, raw: bytes):
-        self.header.parse(raw[0:2])
+        super().parse(raw)
         self.extended_header.parse(raw[2:4])
 
 class GoodCRCMessage(ControlMessage):
