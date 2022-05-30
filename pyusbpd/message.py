@@ -1,20 +1,19 @@
 import abc
+from dataclasses import dataclass
 from pyusbpd.enum import *
 from pyusbpd.helpers import get_bit_from_array
 
+@dataclass
 class MessageHeader:
     """USB Power Delivery Message Header (6.2.1.1)"""
-
-    def __init__(self):
-        # Default values
-        self.message_type = 0
-        self.port_data_role = PortDataRole.UFP
-        self.port_power_role = False
-        self.specification_revision = SpecificationRevision.REV10
-        self.cable_plug = False
-        self.message_id = 0
-        self.num_data_obj = 0
-        self.extended = False
+    message_type: int = 0
+    port_data_role: PortDataRole = PortDataRole.UFP
+    port_power_role: bool = False
+    specification_revision: SpecificationRevision = SpecificationRevision.REV10
+    cable_plug: bool = False
+    message_id: int = 0
+    num_data_obj: int = 0
+    extended: bool = False
 
     def parse(self, raw: bytes):
         assert len(raw) == 2
