@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from pyusbpd.message import *
+from pyusbpd.header import MessageHeader
 
 hdr = MessageHeader()
 hdr.parse(b"\x41\x0C")
