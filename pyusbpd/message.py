@@ -155,10 +155,35 @@ Maximum current: {self.maximum_current*10} mA"""
 class Source_CapabilitiesMessage(DataMessage):
     MESSAGE_TYPE = 0b00001
 
-    def __repr__(self):
-        pd = FixedSupplyPowerData()
-        pd.parse(self.data_objects[0])
-        return str(pd)
+    def __init__(self):
+        super().__init__()
+        self.power_data_objects = list()
+
+    def parse(self, raw: bytes):
+        super().parse(raw)
+        self._parse_power_data_objects()
+
+    def _parse_power_data_objects(self):
+        self.power_data_objects = list()
+        for data_object in self.data_objects:
+            power_data = PowerData()
+            power_data.parse(data_object)
+            if power_data.type == PDOType.FIXED_SUPPLY:
+                power_data = FixedSupplyPowerData()
+            elif power_data.type == PDOType.BATTERY:
+                pass
+            elif power_data.type == PDOType.VARIABLE_SUPPLY:
+                pass
+            elif power_data.type == PDOType.AUGMENTED_POWER_DATA_OBJECT:
+                pass
+            power_data.parse(data_object)
+            self.power_data_objects.append(power_data)
+
+    def __repr__(self) -> str:
+        representation = ""
+        for idx, power_data in enumerate(self.power_data_objects):
+            representation += f"#{idx}: {str(power_data)}"
+        return representation
 
 def parse(raw: bytes) -> Message:
     msg = Message()
