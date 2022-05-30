@@ -61,6 +61,22 @@ class VDMCommand(enum.IntEnum):
     ENTER_MODE = 4
     EXIT_MODE = 5
     ATTENTION = 6
+    SVID_SPECIFIC_0 = 16
+    SVID_SPECIFIC_1 = 17
+    SVID_SPECIFIC_2 = 18
+    SVID_SPECIFIC_3 = 19
+    SVID_SPECIFIC_4 = 20
+    SVID_SPECIFIC_5 = 21
+    SVID_SPECIFIC_6 = 22
+    SVID_SPECIFIC_7 = 23
+    SVID_SPECIFIC_8 = 24
+    SVID_SPECIFIC_9 = 25
+    SVID_SPECIFIC_10 = 26
+    SVID_SPECIFIC_11 = 27
+    SVID_SPECIFIC_12 = 28
+    SVID_SPECIFIC_13 = 29
+    SVID_SPECIFIC_14 = 30
+    SVID_SPECIFIC_15 = 31
 
 class PDOType(enum.IntEnum):
     """Power Data Object type (Table 6-7)"""
