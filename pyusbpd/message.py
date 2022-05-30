@@ -204,7 +204,7 @@ class Vendor_DefinedMessage(DataMessage):
         super().parse(self, raw)
         self.vdm_header.parse(self.data_objects[0])
 
-@dataclass
+@dataclass(kw_only=True)
 class PowerData:
     type: PDOType = PDOType.FIXED_SUPPLY
 
@@ -217,17 +217,16 @@ class PowerData:
 ---
 Type: {self.type}"""
 
+@dataclass(kw_only=True)
 class FixedSupplyPowerData(PowerData):
-    def __init__(self):
-        super().__init__()
-        self.usb_suspend_supported = False
-        self.unconstrained_power = False
-        self.usb_communications_capable = False
-        self.dualrole_data = False
-        self.unchunked_extended_messages_supported = False
-        self.epr_mode_capable = False
-        self.voltage = 0
-        self.maximum_current = 0
+    usb_suspend_supported: bool = False
+    unconstrained_power: bool = False
+    usb_communications_capable: bool = False
+    dualrole_data: bool = False
+    unchunked_extended_messages_supported: bool = False
+    epr_mode_capable: bool = False
+    voltage: int = 0
+    maximum_current: int = 0
 
     def parse(self, raw: bytes):
         super().parse(raw)
