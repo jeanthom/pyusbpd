@@ -18,22 +18,15 @@ class MessageHeader:
     def parse(self, raw: bytes):
         assert len(raw) == 2
 
-        # USB PD r3.1 6.2.1.1.8
-        self.message_type = int(raw[0] & 0x1F)
-        # USB PD r3.1 6.2.1.1.6
-        self.port_data_role = PortDataRole(get_bit_from_array(raw, 5))
-        # USB PD r3.1 6.2.1.1.5
-        self.specification_revision = SpecificationRevision(int(raw[0] >> 6))
-        # USB PD r3.1 6.2.1.1.7
-        self.cable_plug = get_bit_from_array(raw, 8)
-        # USB PD r3.1 6.2.1.1.4
-        self.port_power_role = get_bit_from_array(raw, 8)
-        # USB PD r3.1 6.2.1.1.3
-        self.message_id = int((raw[1] & 0x0E) >> 1)
-        # USB PD r3.1 6.2.1.1.2
-        self.num_data_obj = int((raw[1] & 0x70) >> 4)
-        # USB PD r3.1 6.2.1.1.1
-        self.extended = get_bit_from_array(raw, 15)
+        # USB PD r3.1 section numbers
+        self.message_type = int(raw[0] & 0x1F) # 6.2.1.1.8
+        self.port_data_role = PortDataRole(get_bit_from_array(raw, 5)) # 6.2.1.1.6
+        self.specification_revision = SpecificationRevision(int(raw[0] >> 6)) # 6.2.1.1.5
+        self.cable_plug = get_bit_from_array(raw, 8) # 6.2.1.1.7
+        self.port_power_role = get_bit_from_array(raw, 8) # 6.2.1.1.4
+        self.message_id = int((raw[1] & 0x0E) >> 1) # 6.2.1.1.3
+        self.num_data_obj = int((raw[1] & 0x70) >> 4) # 6.2.1.1.2
+        self.extended = get_bit_from_array(raw, 15) # 6.2.1.1.1
 
     def encode(self) -> bytes:
         pass
