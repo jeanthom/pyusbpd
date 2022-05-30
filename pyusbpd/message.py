@@ -51,14 +51,13 @@ Specification Revision: {self.specification_revision}
 Port Data Role: {self.port_data_role}
 Message Type: {self.message_type}"""
 
+@dataclass
 class ExtendedMessageHeader:
     """USB Power Delivery Extended Message Header (6.2.1.2)"""
-
-    def __init__(self):
-        self.data_size = 0
-        self.request_chunk = False
-        self.chunk_number = 0
-        self.chunked = False
+    data_size: int = 0
+    request_chunk: bool = False
+    chunk_number: int = 0
+    chunked: bool = False
 
     def parse(self, raw: bytes):
         assert len(raw) == 2
