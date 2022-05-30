@@ -204,9 +204,9 @@ class Vendor_DefinedMessage(DataMessage):
         super().parse(self, raw)
         self.vdm_header.parse(self.data_objects[0])
 
+@dataclass
 class PowerData:
-    def __init__(self):
-        self.type = PDOType.FIXED_SUPPLY
+    type: PDOType = PDOType.FIXED_SUPPLY
 
     def parse(self, raw: bytes):
         assert len(raw) == 4
