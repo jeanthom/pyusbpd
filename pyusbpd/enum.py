@@ -10,7 +10,7 @@ class PortPowerRole(enum.Flag):
     SINK = False
     SOURCE = True
 
-class SpecificationRevision(enum.Enum):
+class SpecificationRevision(enum.IntEnum):
     """USB Power Delivery Specification Revision
     enumeration from the Message Header struct"""
     REV10 = 0b00
@@ -36,7 +36,7 @@ class SOP(enum.Enum):
     SOP_PRIME_DEBUG = "SOP'_Debug"
     SOP_DOUBLEPRIME_DEBUG = "SOP''_Debug"
 
-class StructuredVDMVersion(enum.Enum):
+class StructuredVDMVersion(enum.IntEnum):
     REV10 = 0b00
     REV20 = 0b01
 
@@ -46,14 +46,14 @@ class StructuredVDMVersion(enum.Enum):
         if self.value == 0b01:
             return "Version 2.0"
 
-class VDMCommandType(enum.Enum):
+class VDMCommandType(enum.IntEnum):
     """Enum of all structured VDM Header Command Types (Table 6-29)"""
     REQ = 0b00
     ACK = 0b01
     NAK = 0b10
     BUSY = 0b11
 
-class VDMCommand(enum.Enum):
+class VDMCommand(enum.IntEnum):
     """Enum of all available VDM Header Commands (Table 6-29)"""
     DISCOVER_IDENTITY = 1
     DISCOVER_SVID = 2
@@ -62,7 +62,7 @@ class VDMCommand(enum.Enum):
     EXIT_MODE = 5
     ATTENTION = 6
 
-class PDOType(enum.Enum):
+class PDOType(enum.IntEnum):
     """Power Data Object type (Table 6-7)"""
     FIXED_SUPPLY = 0b00
     BATTERY = 0b01
