@@ -1,14 +1,14 @@
 import enum
 
-class PortDataRole(enum.Enum):
+class PortDataRole(enum.Flag):
     """Port Data Role (USB PD r3.1 6.2.1.1.6)"""
-    UFP = 0
-    DFP = 1
+    UFP = False
+    DFP = True
 
-class PortPowerRole(enum.Enum):
+class PortPowerRole(enum.Flag):
     """Port Power Role (USB PD r3.1 6.2.1.1.4)"""
-    SINK = 0
-    SOURCE = 1
+    SINK = False
+    SOURCE = True
 
 class SpecificationRevision(enum.Enum):
     """USB Power Delivery Specification Revision
