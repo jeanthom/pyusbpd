@@ -60,14 +60,11 @@ class ExtendedMessageHeader:
     def parse(self, raw: bytes):
         assert len(raw) == 2
 
-        # USB PD r3.1 6.2.1.2.4
-        self.data_size = int(raw[0] | ((raw[1] & 0x01) << 8))
-        # USB PD r3.1 6.2.1.2.3
-        self.request_chunk = get_bit_from_array(raw, 10)
-        # USB PD r3.1 6.2.1.2.2
-        self.chunk_number = int((raw[1] & 0x78) >> 3)
-        # USB PD r3.1 6.2.1.2.1
-        self.chunked = get_bit_from_array(raw, 15)
+        # USB PD r3.1 section numbers
+        self.data_size = get_int_from_array(raw, width=9, offset=0) # 6.2.1.2.4
+        self.request_chunk = get_bit_from_array(raw, 10) # 6.2.1.2.3
+        self.chunk_number = get_int_from_array(raw, width=4, offset=11) # 6.2.1.2.2
+        self.chunked = get_bit_from_array(raw, 15) # 6.2.1.2.1
 
     def encode(self) -> bytes:
         pass
