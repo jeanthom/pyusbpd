@@ -33,6 +33,8 @@ class Message:
         return
 
 class ControlMessage(Message):
+    """Control Message (6.3)"""
+
     def parse(self, raw: bytes):
         super().parse(raw)
 
@@ -40,6 +42,8 @@ class ControlMessage(Message):
         return self.header.encode()
 
 class DataMessage(Message):
+    """Data Message (6.4)"""
+
     def __init__(self):
         super().__init__()
         self.data_objects = []
@@ -57,6 +61,8 @@ class DataMessage(Message):
         self.header.num_data_obj = len(self.data_objects)
 
 class ExtendedMessage(Message):
+    """Extended Message (6.5)"""
+
     def __init__(self):
         super().__init__()
         self.extended_header = ExtendedMessageHeader()
@@ -66,6 +72,7 @@ class ExtendedMessage(Message):
         self.extended_header.parse(raw[2:4])
 
 class GoodCRCMessage(ControlMessage):
+    """Good CRC Message (6.3.1)"""
     MESSAGE_TYPE = 0b00001
 
     def __init__(self):
@@ -73,6 +80,7 @@ class GoodCRCMessage(ControlMessage):
         self.header.message_type = GoodCRCMessage.MESSAGE_TYPE
 
 class AcceptMessage(ControlMessage):
+    """Accept Message (6.3.3)"""
     MESSAGE_TYPE = 0b00011
 
     def __init__(self):
@@ -80,6 +88,7 @@ class AcceptMessage(ControlMessage):
         self.header.message_type = AcceptMessage.MESSAGE_TYPE
 
 class RejectMessage(ControlMessage):
+    """Reject Message (6.3.4)"""
     MESSAGE_TYPE = 0b00100
 
     def __init__(self):
@@ -87,6 +96,7 @@ class RejectMessage(ControlMessage):
         self.header.message_type = RejectMessage.MESSAGE_TYPE
 
 class PingMessage(ControlMessage):
+    """Ping Message (6.3.5)"""
     MESSAGE_TYPE = 0b00101
 
     def __init__(self):
@@ -94,6 +104,7 @@ class PingMessage(ControlMessage):
         self.header.message_type = PingMessage.MESSAGE_TYPE
 
 class Vendor_DefinedMessage(DataMessage):
+    """Vendor Defined Message (6.4.4)"""
     MESSAGE_TYPE = 0b01111
 
     def __init__(self):
@@ -119,6 +130,7 @@ Type: {self.type}"""
 
 @dataclass(kw_only=True)
 class FixedSupplyPowerData(PowerData):
+    """Fixed Supply Power Data Object (6.4.1.2.2)"""
     usb_suspend_supported: bool = False
     unconstrained_power: bool = False
     usb_communications_capable: bool = False
