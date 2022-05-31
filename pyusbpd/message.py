@@ -1,7 +1,7 @@
 import abc
 from dataclasses import dataclass
 from pyusbpd.enum import *
-from pyusbpd.helpers import get_bit_from_array
+from pyusbpd.helpers import get_bit_from_array, get_int_from_array
 from pyusbpd.header import MessageHeader, ExtendedMessageHeader, VDMHeader
 
 __all__ = [
@@ -136,9 +136,9 @@ class FixedSupplyPowerData(PowerData):
         self.dualrole_data = get_bit_from_array(raw, 25)
         self.unchunked_extended_messages_supported = get_bit_from_array(raw, 24)
         self.epr_mode_capable = get_bit_from_array(raw, 23)
-        self.voltage = (raw[1] >> 2) | ((raw[2] & 0xF) << 6)
+        self.voltage = get_int_from_array(raw, offset=10, width=10)
         # Table 6-9
-        self.maximum_current = raw[0] | (raw[1] & 0x3) << 8
+        self.maximum_current = get_int_from_array(raw, offset=0, width=10)
 
     def __repr__(self):
         return super().__repr__() + "\n" + f"""Fixed supply power data object
