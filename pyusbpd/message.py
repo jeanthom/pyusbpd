@@ -152,6 +152,34 @@ EPR Mode Capable: {self.epr_mode_capable}
 Voltage: {self.voltage*50/1000} V
 Maximum current: {self.maximum_current*10} mA"""
 
+@dataclass(kw_only=True)
+class VariableSupplyPowerData(PowerData):
+    """Variable Supply (non-Battery) Power Data Object (6.4.1.2.3)"""
+    maximum_voltage: int = 0
+    minimum_voltage: int = 0
+    maximum_current: int = 0
+
+    def parse(self, raw: bytes):
+        super().parse(raw)
+        # Table 6-11
+        self.maximum_voltage = get_int_from_array(raw, offset=20, width=10)
+        self.minimum_voltage = get_int_from_array(raw, offset=10, width=10)
+        self.maximum_current = get_int_from_array(raw, offset=0, width=10)
+
+@dataclass(kw_only=True)
+class BatterySupplyPowerData(PowerData):
+    """Battery Supply Power Data Object (6.4.1.2.4)"""
+    maximum_voltage: int = 0
+    minimum_voltage: int = 0
+    maximum_allowable_power: int = 0
+
+    def parse(self, raw: bytes):
+        super().parse(raw)
+        # Table 6-12
+        self.maximum_voltage = get_int_from_array(raw, offset=20, width=10)
+        self.minimum_voltage = get_int_from_array(raw, offset=10, width=10)
+        self.maximum_allowable_power = get_int_from_array(raw, offset=0, width=10)
+
 class Source_CapabilitiesMessage(DataMessage):
     MESSAGE_TYPE = 0b00001
 
@@ -171,11 +199,11 @@ class Source_CapabilitiesMessage(DataMessage):
             if power_data.type == PDOType.FIXED_SUPPLY:
                 power_data = FixedSupplyPowerData()
             elif power_data.type == PDOType.BATTERY:
-                pass
+                power_data = BatterySupplyPowerData()
             elif power_data.type == PDOType.VARIABLE_SUPPLY:
-                pass
+                power_data = VariableSupplyPowerData()
             elif power_data.type == PDOType.AUGMENTED_POWER_DATA_OBJECT:
-                pass
+                raise NotImplementedError
             power_data.parse(data_object)
             self.power_data_objects.append(power_data)
 
