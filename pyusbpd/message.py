@@ -59,6 +59,7 @@ class DataMessage(Message):
 
     def encode(self) -> bytes:
         self.header.num_data_obj = len(self.data_objects)
+        return self.header.encode() + b''.join(self.data_objects)
 
 class ExtendedMessage(Message):
     """Extended Message (6.5)"""
