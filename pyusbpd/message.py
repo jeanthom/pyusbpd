@@ -203,6 +203,10 @@ class Source_CapabilitiesMessage(DataMessage):
         super().parse(raw)
         self._parse_power_data_objects()
 
+    def encode(self) -> bytes:
+        self.data_objects = map(lambda x: x.encode(), self.power_data_objects)
+        return super().encode()
+
     def _parse_power_data_objects(self):
         self.power_data_objects = list()
         for data_object in self.data_objects:
