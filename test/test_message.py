@@ -16,3 +16,10 @@ def test_parse():
 
     msg = parse(b"\x41\x0C")
     assert isinstance(msg, GoodCRCMessage)
+
+def test_controlmessage_parse_encode():
+    reference = b"\x41\x0C"
+    msg = GoodCRCMessage()
+    msg.parse(reference)
+    encoded = msg.encode()
+    assert encoded == reference
