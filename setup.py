@@ -16,6 +16,6 @@ setup(
 	license='ISC',
 	python_requires='>=3.10',
 	install_requires=[
-		'bitarray>=2.5.1'
+		'bitstring>=3.1.9'
 	],
 )
