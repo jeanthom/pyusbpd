@@ -34,7 +34,15 @@ class MessageHeader:
         self.extended = get_bit_from_array(raw, 15) # 6.2.1.1.1
 
     def encode(self) -> bytes:
-        pass
+        raw = BitArray(length=16)
+        raw[0:5] = self.message_type
+        raw[5] = bool(self.port_data_role)
+        raw[6:8] = int(self.specification_revision)
+        raw[8] = self.port_power_role # TODO
+        raw[9:12] = self.message_id
+        raw[12:15] = self.num_data_obj
+        raw[15] = self.extended
+        return raw.bytes
 
     def __repr__(self):
         """Returns a string representation"""
