@@ -70,19 +70,6 @@ class Message:
             s.byteswap()
             return s.bytes
 
-        def __str__(self):
-            """Returns a string representation"""
-            return f"""USB Power Delivery Message Header
----
-Extended: {self.extended}
-Number of Data Objects: {self.num_data_obj}
-MessageID: {self.message_id}
-Port Power Role: {self.port_power_role}
-Cable Plug: {self.cable_plug}
-Specification Revision: {self.specification_revision}
-Port Data Role: {self.port_data_role}
-Message Type: {self.message_type}"""
-
     def __init__(self):
         self.header = Message.Header()
 
@@ -160,15 +147,6 @@ class ExtendedMessage(Message):
             s = bitstring.pack(fmt, **val)
             s.byteswap()
             return s
-
-        def __repr__(self):
-            """Returns a string representation"""
-            return f"""USB Power Delivery Extended Message Header
-    ---
-    Chunked: {self.chunked}
-    Chunk Number: {self.chunk_number}
-    Request Chunk: {self.request_chunk}
-    Data Size: {self.data_size}"""
 
     def __init__(self):
         super().__init__()
