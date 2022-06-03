@@ -5,4 +5,8 @@ def get_bit_from_array(arr: bytes, pos: int) -> bool:
 
 def get_int_from_array(arr: bytes, width: int, offset: int = 0):
     source = BitArray(arr)
-    return source[offset:offset+width].uint
+    source.byteswap()
+    source.reverse()
+    extracted = source[offset:offset+width]
+    extracted.reverse()
+    return extracted.uint
