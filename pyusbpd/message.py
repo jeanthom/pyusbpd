@@ -12,6 +12,7 @@ __all__ = [
     "GoodCRCMessage",
     "AcceptMessage",
     "RejectMessage",
+    "Get_StatusMessage",
     "Vendor_DefinedMessage",
     "PowerData",
     "FixedSupplyPowerData",
@@ -188,6 +189,14 @@ class PingMessage(ControlMessage):
     def __init__(self):
         super().__init__()
         self.header.message_type = PingMessage.MESSAGE_TYPE
+
+class Get_StatusMessage(ControlMessage):
+    """Get_Status Message (6.3.18)"""
+    MESSAGE_TYPE = 0b10010
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_StatusMessage.MESSAGE_TYPE
 
 class Vendor_DefinedMessage(DataMessage):
     """Vendor Defined Message (6.4.4)"""
@@ -424,6 +433,8 @@ def parse(raw: bytes) -> Message:
                 msg = AcceptMessage()
             elif msg.header.message_type == RejectMessage.MESSAGE_TYPE:
                 msg = RejectMessage()
+            elif msg.header.message_type == Get_StatusMessage.MESSAGE_TYPE:
+                msg = Get_StatusMessage()
             else:
                 msg = ControlMessage()
 
