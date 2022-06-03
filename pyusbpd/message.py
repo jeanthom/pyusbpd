@@ -16,6 +16,7 @@ __all__ = [
     "PowerData",
     "FixedSupplyPowerData",
     "Source_CapabilitiesMessage",
+    "RevisionMessage",
     "parse"
 ]
 
@@ -348,6 +349,57 @@ class Source_CapabilitiesMessage(DataMessage):
             representation += f"#{idx}: {str(power_data)}"
         return representation
 
+class RevisionMessage(DataMessage):
+    MESSAGE_TYPE = 0b01100
+
+    @dataclass
+    class RevisionMessageDataObject:
+        """Revision Message Data Object (RMDO)"""
+        revision_major: int = 0
+        revision_minor: int = 0
+        version_major: int = 0
+        version_minor: int = 0
+
+        def parse(self, raw: bytes):
+            # Table 6-52
+            self.revision_major = get_int_from_array(raw, offset=28, width=4)
+            self.revision_minor = get_int_from_array(raw, offset=24, width=4)
+            self.version_major = get_int_from_array(raw, offset=20, width=4)
+            self.version_minor = get_int_from_array(raw, offset=16, width=4)
+
+        def encode(self) -> bytes:
+            fmt = """
+                uint:4=revision_major
+                uint:4=revision_minor
+                uint:4=version_major
+                uint:4=version_minor
+                uint:32=0
+            """
+            val = {
+                'revision_major': self.revision_major,
+                'revision_minor': self.revision_minor,
+                'version_major': self.version_major,
+                'version_minor': self.version_minor,
+            }
+            s = bitstring.pack(fmt, **val)
+            s.byteswap()
+            return s.bytes
+
+        def __str__(self):
+            return f"Revision {self.revision_major}.{self.revision_minor}, Version {self.version_major}.{self.verison_minor}"
+
+    def __init__(self):
+        super().__init__()
+        self.rmdo = RevisionMessage.RevisionMessageDataObject()
+
+    def parse(self, raw: bytes):
+        super().parse(raw)
+        self.rmdo.parse(self.data_objects[0])
+
+    def encode(self) -> bytes:
+        self.data_objects = [self.rmdo.encode()]
+        return super.encode()
+
 def parse(raw: bytes) -> Message:
     msg = Message()
     msg.parse(raw)
@@ -361,6 +413,8 @@ def parse(raw: bytes) -> Message:
                 msg = Source_CapabilitiesMessage()
             elif msg.header.message_type == Vendor_DefinedMessage.MESSAGE_TYPE:
                 msg = Vendor_DefinedMessage()
+            elif msg.header.message_type == RevisionMessage.MESSAGE_TYPE:
+                msg = RevisionMessage()
             else:
                 msg = DataMessage()
         else:
