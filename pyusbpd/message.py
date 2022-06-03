@@ -1,8 +1,9 @@
 import abc
 from dataclasses import dataclass
+import bitstring
 from pyusbpd.enum import *
 from pyusbpd.helpers import get_bit_from_array, get_int_from_array
-from pyusbpd.header import MessageHeader, ExtendedMessageHeader, VDMHeader
+from pyusbpd.header import VDMHeader
 
 __all__ = [
     "ControlMessage",
@@ -21,8 +22,69 @@ __all__ = [
 class Message:
     __metaclass__ = abc.ABCMeta
 
+    @dataclass
+    class Header:
+        """USB Power Delivery Message Header (6.2.1.1)"""
+        message_type: int = 0
+        port_data_role: PortDataRole = PortDataRole.UFP
+        port_power_role: bool = False
+        specification_revision: SpecificationRevision = SpecificationRevision.REV10
+        cable_plug: bool = False
+        message_id: int = 0
+        num_data_obj: int = 0
+        extended: bool = False
+
+        def parse(self, raw: bytes):
+            assert len(raw) == 2
+
+            # USB PD r3.1 section numbers
+            self.message_type = get_int_from_array(raw, width=5, offset=0) # 6.2.1.1.8
+            self.port_data_role = PortDataRole(get_bit_from_array(raw, 5)) # 6.2.1.1.6
+            self.specification_revision = SpecificationRevision(get_int_from_array(raw, width=2, offset=6)) # 6.2.1.1.5
+            self.cable_plug = get_bit_from_array(raw, 8) # 6.2.1.1.7
+            self.port_power_role = get_bit_from_array(raw, 8) # 6.2.1.1.4
+            self.message_id = get_int_from_array(raw, width=3, offset=9) # 6.2.1.1.3
+            self.num_data_obj = get_int_from_array(raw, width=3, offset=12) # 6.2.1.1.2
+            self.extended = get_bit_from_array(raw, 15) # 6.2.1.1.1
+
+        def encode(self) -> bytes:
+            sop_only_fmt = """
+                bool=extended,
+                uint:3=num_data_obj,
+                uint:3=message_id,
+                bool=port_power_role,
+                uint:2=specification_revision,
+                bool=port_data_role,
+                uint:5=message_type,
+            """
+            val = {
+                'message_type': self.message_type,
+                'port_data_role': bool(self.port_data_role),
+                'specification_revision': self.specification_revision,
+                'port_power_role': self.port_power_role,
+                'message_id': self.message_id,
+                'num_data_obj': self.num_data_obj,
+                'extended': self.extended,
+            }
+            s = bitstring.pack(sop_only_fmt, **val)
+            s.byteswap()
+            return s.bytes
+
+        def __str__(self):
+            """Returns a string representation"""
+            return f"""USB Power Delivery Message Header
+---
+Extended: {self.extended}
+Number of Data Objects: {self.num_data_obj}
+MessageID: {self.message_id}
+Port Power Role: {self.port_power_role}
+Cable Plug: {self.cable_plug}
+Specification Revision: {self.specification_revision}
+Port Data Role: {self.port_data_role}
+Message Type: {self.message_type}"""
+
     def __init__(self):
-        self.header = MessageHeader()
+        self.header = Message.Header()
 
     @abc.abstractmethod
     def parse(self, raw: bytes):
@@ -64,9 +126,53 @@ class DataMessage(Message):
 class ExtendedMessage(Message):
     """Extended Message (6.5)"""
 
+    @dataclass
+    class Header:
+        """USB Power Delivery Extended Message Header (6.2.1.2)"""
+        data_size: int = 0
+        request_chunk: bool = False
+        chunk_number: int = 0
+        chunked: bool = False
+
+        def parse(self, raw: bytes):
+            assert len(raw) == 2
+
+            # USB PD r3.1 section numbers
+            self.data_size = get_int_from_array(raw, width=9, offset=0) # 6.2.1.2.4
+            self.request_chunk = get_bit_from_array(raw, 10) # 6.2.1.2.3
+            self.chunk_number = get_int_from_array(raw, width=4, offset=11) # 6.2.1.2.2
+            self.chunked = get_bit_from_array(raw, 15) # 6.2.1.2.1
+
+        def encode(self) -> bytes:
+            fmt = """
+                bool=chunked,
+                uint:4=chunk_number,
+                bool=request_chunk,
+                bool=0,
+                uint:9=data_size,
+            """
+            val = {
+                'chunked': self.chunked,
+                'chunk_number': self.chunk_number,
+                'request_chunk': self.request_chunk,
+                'data_size': self.data_size,
+            }
+            s = bitstring.pack(fmt, **val)
+            s.byteswap()
+            return s
+
+        def __repr__(self):
+            """Returns a string representation"""
+            return f"""USB Power Delivery Extended Message Header
+    ---
+    Chunked: {self.chunked}
+    Chunk Number: {self.chunk_number}
+    Request Chunk: {self.request_chunk}
+    Data Size: {self.data_size}"""
+
     def __init__(self):
         super().__init__()
-        self.extended_header = ExtendedMessageHeader()
+        self.extended_header = ExtendedMessage.Header()
 
     def parse(self, raw: bytes):
         super().parse(raw)
@@ -132,12 +238,14 @@ Type: {self.type}"""
 @dataclass(kw_only=True)
 class FixedSupplyPowerData(PowerData):
     """Fixed Supply Power Data Object (6.4.1.2.2)"""
+    dualrole_power: bool = False
     usb_suspend_supported: bool = False
     unconstrained_power: bool = False
     usb_communications_capable: bool = False
     dualrole_data: bool = False
     unchunked_extended_messages_supported: bool = False
     epr_mode_capable: bool = False
+    peak_current: int = 0
     voltage: int = 0
     maximum_current: int = 0
 
@@ -149,9 +257,41 @@ class FixedSupplyPowerData(PowerData):
         self.dualrole_data = get_bit_from_array(raw, 25)
         self.unchunked_extended_messages_supported = get_bit_from_array(raw, 24)
         self.epr_mode_capable = get_bit_from_array(raw, 23)
+        self.peak_current = get_int_from_array(raw, offset=20, width=2)
         self.voltage = get_int_from_array(raw, offset=10, width=10)
         # Table 6-9
         self.maximum_current = get_int_from_array(raw, offset=0, width=10)
+
+    def encode(self) -> bytes:
+        fmt = """
+            uint:2=0,
+            bool=dualrole_power,
+            bool=usb_suspend_supported,
+            bool=unconstrained_power,
+            bool=usb_communications_capable,
+            bool=dualrole_data,
+            bool=unchunked_extended_messages_supported,
+            bool=epr_mode_capable,
+            bool=0,
+            uint:2=peak_current,
+            uint:10=voltage,
+            uint:10=maximum_current,
+        """
+        val = {
+            'dualrole_power': self.dualrole_power,
+            'usb_suspend_supported': self.usb_suspend_supported,
+            'unconstrained_power': self.unconstrained_power,
+            'usb_communications_capable': self.usb_communications_capable,
+            'dualrole_data': self.dualrole_data,
+            'unchunked_extended_messages_supported': self.unchunked_extended_messages_supported,
+            'epr_mode_capable': self.epr_mode_capable,
+            'peak_current': self.peak_current,
+            'voltage': self.voltage,
+            'maximum_current': self.maximum_current,
+        }
+        s = bitstring.pack(fmt, **val)
+        s.byteswap()
+        return s.bytes
 
     def __repr__(self):
         return super().__repr__() + "\n" + f"""Fixed supply power data object
@@ -163,7 +303,7 @@ Dual-role data: {self.dualrole_data}
 Unchunked Extended Messages Supported: {self.unchunked_extended_messages_supported}
 EPR Mode Capable: {self.epr_mode_capable}
 Voltage: {self.voltage*50/1000} V
-Maximum current: {self.maximum_current*10} mA"""
+Maximum current: {self.maximum_current*10} mA\n"""
 
 @dataclass(kw_only=True)
 class VariableSupplyPowerData(PowerData):
@@ -237,6 +377,7 @@ def parse(raw: bytes) -> Message:
     if msg.header.extended:
         msg = ExtendedMessage()
     else:
+        print(msg.header.num_data_obj)
         if msg.header.num_data_obj > 0:
             if msg.header.message_type == Source_CapabilitiesMessage.MESSAGE_TYPE:
                 msg = Source_CapabilitiesMessage()
