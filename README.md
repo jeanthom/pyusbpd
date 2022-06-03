@@ -3,15 +3,13 @@
 Python structures and decoding for USB Power Delivery exploration, testing and maybe more?
 
 ```python
-from pyusbpd.message import Message
-from pyusbpd.enum import SOP
+from pyusbpd.message import parse
 
-msg = Message(sop=SOP.SOP, raw=b"\x41\x0C").decode()
-
+msg = parse(b"\x41\x0C")
 print(msg)
 # <pyusbpd.message.GoodCRCMessage object at 0x7f0a8b2ca9b0>
 
-print(msg.message_header)
+print(msg.header)
 # USB Power Delivery Message Header
 # ---
 # Extended: False

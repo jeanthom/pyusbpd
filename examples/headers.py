@@ -2,14 +2,14 @@
 
 from pyusbpd.message import *
 
-hdr = MessageHeader(b"\x41\x0C")
-print(hdr)
+msg = GoodCRCMessage()
+msg.parse(b"\x41\x0C")
+print(msg.header)
 
-msg = GoodCRCMessage(sop=0, raw=b"\x41\x0C")
-print(msg.message_header)
+msg = Source_CapabilitiesMessage()
+msg.parse(b"\x61\x11\x96\x90\x01\x36\x3e\x61\x73\x9c")
+print(msg)
 
-msg = Message(sop=0, raw=b"\x6F\x2D\x01\x01\xAC\x05\x00\x00\x00\x00").decode()
-print(msg.vdm_header)
-
-msg = Message(sop=SOP.SOP, raw=b"\x61\x11\x96\x90\x01\x36").decode()
+msg = Source_CapabilitiesMessage()
+msg.parse(b"\x61\x21\xF0\x90\x01\x08\xC8\xA0\x04\x00")
 print(msg)

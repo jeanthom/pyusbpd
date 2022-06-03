@@ -14,5 +14,8 @@ setup(
 	author='Jean THOMAS',
 	author_email='virgule@jeanthomas.me',
 	license='ISC',
-	python_requires=">=3.8",
+	python_requires='>=3.10',
+	install_requires=[
+		'bitstring>=3.1.9'
+	],
 )
