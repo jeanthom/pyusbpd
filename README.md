@@ -10,16 +10,7 @@ print(msg)
 # <pyusbpd.message.GoodCRCMessage object at 0x7f0a8b2ca9b0>
 
 print(msg.header)
-# USB Power Delivery Message Header
-# ---
-# Extended: False
-# Number of Data Objects: 0
-# MessageID: 6
-# Port Power Role: False
-# Cable Plug: False
-# Specification Revision: Revision 2.0
-# Port Data Role: False
-# Message Type: 1
+# Message.Header(message_type=1, port_data_role=<PortDataRole.UFP: False>, port_power_role=False, specification_revision=<SpecificationRevision.REV20: 1>, cable_plug=False, message_id=6, num_data_obj=0, extended=False)
 ```
 
 pyusbpd is mostly in a PoC state, but feel free to send pull requests ;-)
