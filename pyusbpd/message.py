@@ -624,6 +624,33 @@ class FixedVariableRequestDataObject:
     def encode(self) -> bytes:
         return b""
 
+@dataclass
+class BISTDataObject:
+    command: int = 0
+
+    def parse(self, raw: bytes):
+        # Table 6-27
+        self.command = get_int_from_array(raw, offset=28, width=4)
+
+class BISTMessage(DataMessage):
+    """BIST Message (6.4.3)"""
+    MESSAGE_TYPE = 0b00011
+
+    def __init__(self):
+        super().__init__()
+        self.bist_do = []
+
+    def parse(self, raw: bytes):
+        super().parse(raw)
+        self._parse_bist_data_objects()
+
+    def _parse_bist_data_objects(self):
+        self.bist_do = []
+        for x in self.data_objects:
+            do = BISTDataObject()
+            do.parse(x)
+            self.bist_do.append(do)
+
 def parse_controlmessage(raw: bytes) -> ControlMessage:
     class_list = [
         GoodCRCMessage,
