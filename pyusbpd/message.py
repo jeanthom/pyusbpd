@@ -6,18 +6,41 @@ from pyusbpd.helpers import get_bit_from_array, get_int_from_array
 from pyusbpd.header import VDMHeader
 
 __all__ = [
-    "ControlMessage",
     "DataMessage",
     "ExtendedMessage",
+
+    "ControlMessage",
     "GoodCRCMessage",
+    "GotoMinMessage",
     "AcceptMessage",
     "RejectMessage",
+    "PingMessage",
+    "PS_RDYMessage",
+    "Get_Source_CapMessage",
+    "Get_Sink_CapMessage",
+    "DR_SwapMessage",
+    "PR_SwapMessage",
+    "VCONN_SwapMessage",
+    "WaitMessage",
+    "Soft_ResetMessage",
+    "Data_ResetMessage",
+    "Data_Reset_CompleteMessage",
+    "Not_SupportedMessage",
+    "Get_Source_Cap_ExtendedMessage",
     "Get_StatusMessage",
+    "FR_SwapMessage",
+    "Get_PPS_StatusMessage",
+    "Get_Country_CodesMessage",
+    "Get_Sink_Cap_ExtendedMessage",
+    "Get_Source_InfoMessage",
+    "Get_RevisionMessage",
+
     "Vendor_DefinedMessage",
     "PowerData",
     "FixedSupplyPowerData",
     "Source_CapabilitiesMessage",
     "RevisionMessage",
+    "RequestMessage",
     "parse"
 ]
 
@@ -166,6 +189,14 @@ class GoodCRCMessage(ControlMessage):
         super().__init__()
         self.header.message_type = GoodCRCMessage.MESSAGE_TYPE
 
+class GotoMinMessage(ControlMessage):
+    """GotoMin Message (6.3.2)"""
+    MESSAGE_TYPE = 0b00010
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = GotoMinMessage.MESSAGE_TYPE
+
 class AcceptMessage(ControlMessage):
     """Accept Message (6.3.3)"""
     MESSAGE_TYPE = 0b00011
@@ -190,6 +221,102 @@ class PingMessage(ControlMessage):
         super().__init__()
         self.header.message_type = PingMessage.MESSAGE_TYPE
 
+class PS_RDYMessage(ControlMessage):
+    """PS_RDY Message (6.3.6)"""
+    MESSAGE_TYPE = 0b00110
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = PS_RDYMessage.MESSAGE_TYPE
+
+class Get_Source_CapMessage(ControlMessage):
+    """Get_Source_Cap Message (6.3.7)"""
+    MESSAGE_TYPE = 0b00111
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_Source_CapMessage.MESSAGE_TYPE
+
+class Get_Sink_CapMessage(ControlMessage):
+    """Get_Sink_Cap Message (6.3.8)"""
+    MESSAGE_TYPE = 0b01000
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_Sink_CapMessage.MESSAGE_TYPE
+
+class DR_SwapMessage(ControlMessage):
+    """DR_Swap Message (6.3.9)"""
+    MESSAGE_TYPE = 0b01001
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = DR_SwapMessage.MESSAGE_TYPE
+
+class PR_SwapMessage(ControlMessage):
+    """PR_Swap Message (6.3.10)"""
+    MESSAGE_TYPE = 0b01010
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = PR_SwapMessage.MESSAGE_TYPE
+
+class VCONN_SwapMessage(ControlMessage):
+    """VCONN_Swap Message (6.3.11)"""
+    MESSAGE_TYPE = 0b01011
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = VCONN_SwapMessage.MESSAGE_TYPE
+
+class WaitMessage(ControlMessage):
+    """Wait Message (6.3.12)"""
+    MESSAGE_TYPE = 0b01100
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = WaitMessage.MESSAGE_TYPE
+
+class Soft_ResetMessage(ControlMessage):
+    """Soft_Reset Message (6.3.13)"""
+    MESSAGE_TYPE = 0b01101
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Soft_ResetMessage.MESSAGE_TYPE
+
+class Data_ResetMessage(ControlMessage):
+    """Data_Reset Message (6.3.14)"""
+    MESSAGE_TYPE = 0b01110
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Data_ResetMessage.MESSAGE_TYPE
+
+class Data_Reset_CompleteMessage(ControlMessage):
+    """Data_Reset_Complete Message (6.3.15)"""
+    MESSAGE_TYPE = 0b01111
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Data_Reset_CompleteMessage.MESSAGE_TYPE
+
+class Not_SupportedMessage(ControlMessage):
+    """Not_Supported Message (6.3.16)"""
+    MESSAGE_TYPE = 0b10000
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Not_SupportedMessage.MESSAGE_TYPE
+
+class Get_Source_Cap_ExtendedMessage(ControlMessage):
+    """Get_Source_Cap_Extended Message (6.3.17)"""
+    MESSAGE_TYPE = 0b10001
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_Source_Cap_ExtendedMessage.MESSAGE_TYPE
+
 class Get_StatusMessage(ControlMessage):
     """Get_Status Message (6.3.18)"""
     MESSAGE_TYPE = 0b10010
@@ -197,6 +324,54 @@ class Get_StatusMessage(ControlMessage):
     def __init__(self):
         super().__init__()
         self.header.message_type = Get_StatusMessage.MESSAGE_TYPE
+
+class FR_SwapMessage(ControlMessage):
+    """FR_Swap Message (6.3.19)"""
+    MESSAGE_TYPE = 0b10011
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = FR_SwapMessage.MESSAGE_TYPE
+
+class Get_PPS_StatusMessage(ControlMessage):
+    """Get_PPS_Status Message (6.3.20)"""
+    MESSAGE_TYPE = 0b10100
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_PPS_StatusMessage.MESSAGE_TYPE
+
+class Get_Country_CodesMessage(ControlMessage):
+    """Get_Country_Codes Message (6.3.21)"""
+    MESSAGE_TYPE = 0b10101
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_Country_CodesMessage.MESSAGE_TYPE
+
+class Get_Sink_Cap_ExtendedMessage(ControlMessage):
+    """Get_Sink_Cap_Extended Message (6.3.22)"""
+    MESSAGE_TYPE = 0b10110
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_Sink_Cap_ExtendedMessage.MESSAGE_TYPE
+
+class Get_Source_InfoMessage(ControlMessage):
+    """Get_Source_Info Message (6.3.23)"""
+    MESSAGE_TYPE = 0b10111
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_Source_InfoMessage.MESSAGE_TYPE
+
+class Get_RevisionMessage(ControlMessage):
+    """Get_Revision Message (6.3.24)"""
+    MESSAGE_TYPE = 0b11000
+
+    def __init__(self):
+        super().__init__()
+        self.header.message_type = Get_RevisionMessage.MESSAGE_TYPE
 
 class Vendor_DefinedMessage(DataMessage):
     """Vendor Defined Message (6.4.4)"""
@@ -409,6 +584,82 @@ class RevisionMessage(DataMessage):
         self.data_objects = [self.rmdo.encode()]
         return super.encode()
 
+class RequestMessage(DataMessage):
+    MESSAGE_TYPE = 0b00010
+
+    def __init__(self):
+        super().__init__()
+        self.request_objects = []
+
+    def parse(self, raw: bytes):
+        pass
+
+    def encode(self) -> bytes:
+        self.data_objects = list(map(lambda x: x.encode(), self.request_objects))
+        return super().encode()
+
+@dataclass
+class FixedVariableRequestDataObject:
+    object_position: int = 1
+    giveback: bool = False
+    capability_mismatch: bool = False
+    usb_communications_capable: bool = False
+    no_usb_suspend: bool = False
+    unchunked_extended_messages_supported: bool = False
+    epr_mode_capable: bool = False
+    operating_current: int = 0
+    maximum_operating_current: int = 0
+
+    def parse(self, raw: bytes):
+        self.maximum_operating_current = get_int_from_array(raw, offset=0, width=10)
+        self.operating_current = get_int_from_array(raw, offset=10, width=10)
+        self.epr_mode_capable = get_bit_from_array(raw, 22)
+        self.unchunked_extended_messages_supported = get_bit_from_array(raw, 23)
+        self.no_usb_suspend = get_bit_from_array(raw, 24)
+        self.usb_communications_capable = get_bit_from_array(raw, 25)
+        self.capability_mismatch = get_bit_from_array(raw, 26)
+        self.giveback = get_bit_from_array(raw, 27)
+        self.object_position = get_int_from_array(raw, offset=28, width=4)
+
+    def encode(self) -> bytes:
+        return b""
+
+def parse_controlmessage(raw: bytes) -> ControlMessage:
+    class_list = [
+        GoodCRCMessage,
+        GotoMinMessage,
+        AcceptMessage,
+        RejectMessage,
+        PingMessage,
+        PS_RDYMessage,
+        Get_Source_CapMessage,
+        Get_Sink_CapMessage,
+        DR_SwapMessage,
+        PR_SwapMessage,
+        VCONN_SwapMessage,
+        WaitMessage,
+        Soft_ResetMessage,
+        Data_ResetMessage,
+        Data_Reset_CompleteMessage,
+        Not_SupportedMessage,
+        Get_Source_Cap_ExtendedMessage,
+        Get_StatusMessage,
+        FR_SwapMessage,
+        Get_PPS_StatusMessage,
+        Get_Country_CodesMessage,
+        Get_Sink_Cap_ExtendedMessage,
+        Get_Source_InfoMessage,
+        Get_RevisionMessage,
+    ]
+    msg = ControlMessage()
+    msg.parse(raw)
+    for cls in class_list:
+        if cls.MESSAGE_TYPE == msg.header.message_type:
+            msg = cls()
+            msg.parse(raw)
+            return msg
+    return msg
+
 def parse(raw: bytes) -> Message:
     msg = Message()
     msg.parse(raw)
@@ -424,19 +675,12 @@ def parse(raw: bytes) -> Message:
                 msg = Vendor_DefinedMessage()
             elif msg.header.message_type == RevisionMessage.MESSAGE_TYPE:
                 msg = RevisionMessage()
+            elif msg.header.message_type == RequestMessage.MESSAGE_TYPE:
+                msg = RequestMessage()
             else:
                 msg = DataMessage()
         else:
-            if msg.header.message_type == GoodCRCMessage.MESSAGE_TYPE:
-                msg = GoodCRCMessage()
-            elif msg.header.message_type == AcceptMessage.MESSAGE_TYPE:
-                msg = AcceptMessage()
-            elif msg.header.message_type == RejectMessage.MESSAGE_TYPE:
-                msg = RejectMessage()
-            elif msg.header.message_type == Get_StatusMessage.MESSAGE_TYPE:
-                msg = Get_StatusMessage()
-            else:
-                msg = ControlMessage()
+            return parse_controlmessage(raw)
 
     msg.parse(raw)
     return msg
