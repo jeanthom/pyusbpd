@@ -545,6 +545,8 @@ class RevisionMessage(DataMessage):
         version_minor: int = 0
 
         def parse(self, raw: bytes):
+            assert len(raw) == 4
+
             # Table 6-52
             self.revision_major = get_int_from_array(raw, offset=28, width=4)
             self.revision_minor = get_int_from_array(raw, offset=24, width=4)
@@ -611,6 +613,8 @@ class FixedVariableRequestDataObject:
     maximum_operating_current: int = 0
 
     def parse(self, raw: bytes):
+        assert len(raw) == 4
+
         self.maximum_operating_current = get_int_from_array(raw, offset=0, width=10)
         self.operating_current = get_int_from_array(raw, offset=10, width=10)
         self.epr_mode_capable = get_bit_from_array(raw, 22)
