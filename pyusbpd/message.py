@@ -382,7 +382,7 @@ class Vendor_DefinedMessage(DataMessage):
         self.vdm_header = VDMHeader()
 
     def parse(self, raw: bytes):
-        super().parse(self, raw)
+        super().parse(raw)
         self.vdm_header.parse(self.data_objects[0])
 
 @dataclass(kw_only=True)
